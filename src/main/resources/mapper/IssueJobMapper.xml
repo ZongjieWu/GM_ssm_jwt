@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wzj.dao.mapper.IssueJobMapper">
+  <resultMap id="BaseResultMap" type="com.wzj.model.IssueJob">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="enterprise_logo" jdbcType="BIGINT" property="enterpriseLogo" />
+    <result column="enterprise_id" jdbcType="BIGINT" property="enterpriseId" />
+    <result column="enterprise_name" jdbcType="VARCHAR" property="enterpriseName" />
+    <result column="contact_name" jdbcType="VARCHAR" property="contactName" />
+    <result column="contact_phone" jdbcType="VARCHAR" property="contactPhone" />
+    <result column="contact_wechat" jdbcType="VARCHAR" property="contactWechat" />
+    <result column="contact_qq" jdbcType="VARCHAR" property="contactQq" />
+    <result column="contact_email" jdbcType="VARCHAR" property="contactEmail" />
+    <result column="job_name" jdbcType="VARCHAR" property="jobName" />
+    <result column="job_money" jdbcType="VARCHAR" property="jobMoney" />
+    <result column="work_place" jdbcType="VARCHAR" property="workPlace" />
+    <result column="age" jdbcType="VARCHAR" property="age" />
+    <result column="work_age" jdbcType="VARCHAR" property="workAge" />
+    <result column="edu" jdbcType="VARCHAR" property="edu" />
+    <result column="job_detail" jdbcType="VARCHAR" property="jobDetail" />
+    <result column="skill" jdbcType="VARCHAR" property="skill" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="add_time" jdbcType="VARCHAR" property="addTime" />
+    <result column="modify_time" jdbcType="VARCHAR" property="modifyTime" />
+  </resultMap>
+  <select id="paging" resultType="java.util.HashMap">
+    select e.logo,e.name as enterprise_name,
+    ij.id,ij.enterprise_logo,ij.enterprise_id,ij.contact_name,
+    ij.contact_phone,ij.contact_wechat,ij.contact_qq,ij.contact_email,ij.job_name,
+    ij.job_money,ij.work_place,ij.age,ij.work_age,ij.edu,ij.job_detail,ij.skill,
+    ij.remark,ij.status,ij.add_time,ij.modify_time
+    from issue_job ij join enterprise e on ij.enterprise_id=e.id
+    <where>
+      <if test="enterpriseId!=null">
+        and enterprise_id=#{enterpriseId}
+      </if>
+      <if test="keywords!=null and !keywords.equals('')">
+        and (enterprise_name like concat('%',#{keywords},'%') or job_name like concat('%',#{keywords},'%'))
+      </if>
+      <if test="workPlace!=null and !workPlace.equals('')">
+        and work_place like concat('%',#{workPlace},'%')
+      </if>
+      <if test="startAge!=null and endAge!=null and !startAge.equals('') and !endAge.equals('')">
+        and split(age,'-',1) &gt;= #{startAge} and split(age,'-',2) &lt;= #{endAge}
+      </if>
+      <if test="startWorkAge!=null and endWorkAge!=null and !startWorkAge.equals('') and !endWorkAge.equals('')">
+        and split(work_age,'-',1) &gt;= #{startWorkAge} and split(work_age,'-',2) &lt;= #{endWorkAge}
+      </if>
+      <if test="edu!=null and !edu.equals('')">
+        and edu=#{edu}
+      </if>
+    </where>
+  </select>
+  <select id="apiDetail" resultType="java.util.HashMap">
+    select ij.*,e.logo,e.intro from issue_job ij
+    join enterprise e on ij.enterprise_id=e.id
+    <where>
+      <if test="id!=null">
+        ij.id=#{id}
+      </if>
+    </where>
+  </select>
+</mapper>
